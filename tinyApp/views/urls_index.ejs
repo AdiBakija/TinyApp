@@ -4,11 +4,14 @@
   <title>TinyApp</title>
 </head>
 <body>
+  <header>
+    <% include ./partials/_header %>
+</header>
     <h1>Hello, this is your urls_index file</h1>
       <ul>
         <% for(key in urls) { %>
-        <li>
-          <%= JSON.stringify(key) %> : <%= JSON.stringify(urls[key]) %>
+        <li><a href = "#">
+          <%= JSON.stringify(key) %> : <%= JSON.stringify(urls[key]) %></a>
         </li>
         <% }; %>
       </ul>
