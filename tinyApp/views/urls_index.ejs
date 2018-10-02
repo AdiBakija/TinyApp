@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+</head>
+<body>
+    <h1>Hello, this is your urls_index file</h1>
+      <ul>
+        <% for(key in urls) { %>
+        <li>
+          <%= JSON.stringify(key) %> : <%= JSON.stringify(urls[key]) %>
+        </li>
+        <% }; %>
+      </ul>
+</body>
+</html>
