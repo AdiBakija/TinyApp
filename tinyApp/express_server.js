@@ -41,7 +41,7 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   //console.log(req.params.shortURL);
   let longURL = urlDatabase[req.params.shortURL];
-  console.log(urlDatabase);
+  //console.log(urlDatabase);
   res.redirect(longURL, 303);
 });
 
@@ -49,6 +49,21 @@ app.get("/urls/:id", (req, res) => {
   //console.log(req.params)
   let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
+});
+
+app.post("/urls/:id/delete", (req, res) => {
+  //urlDatabase represents the object  and req.params.id
+  //represents the shortURL.  Delete operator deletes the key.
+  delete urlDatabase[req.params.id];
+  //res.redirect just refreshes our page everytime we delete
+  res.redirect("/urls", 302);
+});
+
+app.post("/urls/:id", (req, res) => {
+  //req.body.update references a "name" parameter inside of the
+  //urls_show HTML body
+  urlDatabase[req.params.id] = req.body.update;
+  res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {

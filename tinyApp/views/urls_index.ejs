@@ -7,12 +7,16 @@
   <header>
     <% include ./partials/_header %>
 </header>
-    <h1>Hello, this is your urls_index file</h1>
+    <h1>Hello, welcome to the urls directory</h1>
       <ul>
         <% for(key in urls) { %>
-        <li><a href = "#">
-          <%= JSON.stringify(key) %> : <%= JSON.stringify(urls[key]) %></a>
+
+        <form method="POST" action="/urls/<%=key%>/delete" style="margin:50px;">
+          <li>
+          shortURL: <%= key %> -> longURL: <a href = "#"><%= urls[key] %></a> <input type="submit" value="Delete">
         </li>
+
+        </form>
         <% }; %>
       </ul>
 </body>

@@ -9,7 +9,12 @@
   </header>
     <h1>Hello, this is your urls_show file</h1>
       <ul>
-        <li><a href="<%=longURL%>"><%=longURL%> <%= shortURL %></a></li>
+        <li><a href="<%=longURL%>"><%= shortURL %></a></li>
       </ul>
+      <form action="/urls/<%=shortURL%>" method="POST" style="margin:10px;">
+      <label for="longURL">Enter a URL:</label>
+      <input id="longURL" type="text" name="update" value="http://" style="width: 300px">
+      <input type="submit" value="Update">
+    </form>
 </body>
 </html>
