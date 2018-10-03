@@ -16,6 +16,7 @@ function generateRandomString() {
 var randomSixDig = generateRandomString();
 
 app.use(bodyParser.urlencoded({extended: true}));
+//app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
