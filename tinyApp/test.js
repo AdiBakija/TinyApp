@@ -1,16 +1,6 @@
-var urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
-
-var templateVars = {urls: urlDatabase}
-
-for (let key in templateVars) {
-  for (let key in urlDatabase) {
-    console.log(key, urlDatabase[key]);
-  }
+function generateRandomString() {
+  let r = Math.random().toString(36).substring(7);
+  console.log(r);
 }
 
-// for (let key1 in urlDatabase) {
-//   console.log(key2, urlDatabase[key]);
-// }
+generateRandomString();

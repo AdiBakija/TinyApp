@@ -10,8 +10,10 @@ var urlDatabase = {
 
 function generateRandomString() {
   let r = Math.random().toString(36).substring(7);
-  console.log("random", r);
+  return r;
 }
+
+var randomSixDig = generateRandomString();
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -32,8 +34,15 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // debug statement to see POST parameters
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  urlDatabase[randomSixDig] = req.body.longURL
+  res.redirect("http://localhost:8080/urls/" + randomSixDig);
+});
+
+app.get("/u/:shortURL", (req, res) => {
+  //console.log(req.params.shortURL);
+  let longURL = urlDatabase[req.params.shortURL];
+  console.log(urlDatabase);
+  res.redirect(longURL);
 });
 
 app.get("/urls/:id", (req, res) => {
