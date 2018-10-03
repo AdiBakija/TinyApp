@@ -13,8 +13,8 @@
 
         <form method="POST" action="/urls/<%=key%>/delete" style="margin:50px;">
           <li>
-          shortURL: <%= key %> -> longURL: <a href = "#"><%= urls[key] %></a> <input type="submit" value="Delete">
-        </li>
+            shortURL: <%= key %> -> <a href = "<%= urls[key] %>"><%= urls[key] %></a> <a href="http://localhost:8080/urls/<%=key%>">Edit</a> <button type="submit" value="Delete" color="blue">Delete</button>
+          </li>
 
         </form>
         <% }; %>
