@@ -1,21 +1,27 @@
+<!-- This is a partial header containing user login/logout functionality -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <title>TinyApp</title>
 </head>
 <body>
-    <h1>This is your header</h1>
+    <h1>TinyApp</h1>
+
 <% if (username === undefined) { %>
+
     <form action="/login" method="POST" style="margin:10px;">
       <label>Username:</label>
       <input type="text" name="username" style="width: 200px">
       <input type="submit" value="Sign in">
     </form>
+
 <% } else { %>
+
     <form action="/logout" method="POST" style="margin:10px;">
       <label><%= username %></label>
       <input type="submit" name ="logout" value="Sign out">
     </form>
+
 <% } %>
 
 </body>
