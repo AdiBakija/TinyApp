@@ -2,6 +2,7 @@ var express = require("express");
 var app = express();
 var PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
+var cookieParser = require('cookie-parser')
 //This ist he URL data that needs to get passes to urls_index.ejs
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -16,7 +17,7 @@ function generateRandomString() {
 var randomSixDig = generateRandomString();
 
 app.use(bodyParser.urlencoded({extended: true}));
-//app.use(cookieParser());
+app.use(cookieParser());
 
 app.set("view engine", "ejs");
 
@@ -25,12 +26,21 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  let templateVars = {urls: urlDatabase};
+  console.log(req.cookies);
+  let templateVars = { username: req.cookies["username"], urls: urlDatabase};
   //"urls_index is actually a template of ejs"
   res.render("urls_index", templateVars);
 });
 
+app.post("/login", (req, res) => {
+  let userName = req.body.username;
+  //console.log(userName);
+  res.cookie("username", userName);
+  res.redirect("/urls");
+});
+
 app.get("/urls/new", (req, res) => {
+  let templateVars = {username: req.cookies["username"]};
   res.render("urls_new");
 });
 
@@ -47,8 +57,9 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/urls/:id", (req, res) => {
+  console.log(req.cookies);
   //console.log(req.params)
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id]};
+  let templateVars = { username: req.cookies["username"], shortURL: req.params.id, longURL: urlDatabase[req.params.id]};
   res.render("urls_show", templateVars);
 });
 
