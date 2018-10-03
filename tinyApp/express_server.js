@@ -26,7 +26,6 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log(req.cookies);
   let templateVars = { username: req.cookies["username"], urls: urlDatabase};
   //"urls_index is actually a template of ejs"
   res.render("urls_index", templateVars);
@@ -36,6 +35,13 @@ app.post("/login", (req, res) => {
   let userName = req.body.username;
   //console.log(userName);
   res.cookie("username", userName);
+  res.redirect("/urls");
+});
+
+app.post("/logout", (req, res) => {
+  let userName = req.body.username;
+  //console.log(userName);
+  res.clearCookie('username');
   res.redirect("/urls");
 });
 
