@@ -1,0 +1,33 @@
+<!-- This is the login page -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
+    <header>
+      <% include ./partials/_header %>
+    </header>
+    <h1>Login</h1>
+
+    <% if (user === undefined) { %>
+
+      <form action="/login" method="POST" style="margin:10px;">
+        <label>Email:</label>
+        <input type="email" name="email" style="width: 200px">
+        <label>Password:</label>
+        <input type="password" name="password" style="width: 200px">
+        <input type="submit" value="Sign in">
+      </form>
+
+    <% } else { %>
+
+        <form action="/logout" method="POST" style="margin:10px;">
+        <label><%= user.email %></label>
+        <input type="submit" name ="logout" value="Sign out">
+      </form>
+
+    <% } %>
+
+  </body>
+</html>

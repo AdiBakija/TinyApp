@@ -1,24 +1,26 @@
 <!-- Index Page -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-  <header>
-    <% include ./partials/_header %>
-  </header>
-    <h1>Hello, welcome to the urls index directory</h1>
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
+    <header>
+      <% include ./partials/_header %>
+    </header>
+      <h1>Hello, welcome to the urls index directory</h1>
       <ul>
+
         <% for(key in urls) { %>
 
         <form method="POST" action="/urls/<%=key%>/delete" style="margin:50px;">
           <li>
             shortURL: <%= key %> -> <a href = "<%= urls[key] %>"><%= urls[key] %></a> <a href="http://localhost:8080/urls/<%=key%>">Edit</a> <button type="submit" value="Delete" color="blue">Delete</button>
           </li>
-
         </form>
+
         <% }; %>
+
       </ul>
-</body>
+  </body>
 </html>

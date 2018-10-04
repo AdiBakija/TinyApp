@@ -1,13 +1,13 @@
 <!-- Page for converting provided URL to 6 string alphanum code -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>TinyApp</title>
-</head>
-<body>
-  <header>
-    <% include ./partials/_header %>
-  </header>
+  <head>
+    <title>TinyApp</title>
+  </head>
+  <body>
+    <header>
+      <% include ./partials/_header %>
+    </header>
     <h1>Hello, this is your urls_show file</h1>
       <ul>
         <li><a href="<%=longURL%>"><%= shortURL %></a></li>
@@ -17,5 +17,5 @@
       <input id="longURL" type="text" name="update" value="http://" style="width: 300px">
       <input type="submit" value="Update">
     </form>
-</body>
+  </body>
 </html>
