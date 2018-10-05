@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser')
 const urlDatabase = {
   "b2xVn2": {
     URL: "http://www.lighthouselabs.ca",
-    userID: "user2RandomID"
+    userID: "userRandomID"
   },
   "9sm5xK": {
     URL:"http://www.google.com",
@@ -34,14 +34,22 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 //Set view engine to EJS so EJS knows where to look
 app.set("view engine", "ejs");
-//Function to generate a random 6 digit alphanumeric string
+
+//Helper function to generate a random 6 digit alphanumeric string
 function generateRandomString() {
   let r = Math.random().toString(36).substring(7);
   return r;
 };
 
-function ursForUser(id) {
-
+//Helper function to return filtered database for each user
+function urlsForUser(id) {
+  var filteredUrlDatabase = {};
+  for (key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      filteredUrlDatabase[key] = urlDatabase[key]
+    }
+  }
+  return filteredUrlDatabase;
 };
 
 //Hello message on root page of TinyApp
@@ -56,7 +64,7 @@ app.get("/urls", (req, res) => {
   //This returns the user object based on user cookie
   let user = users[user_id];
   //console.log(user);
-  let templateVars = { user: user, urls: urlDatabase};
+  let templateVars = { user: user, urls: urlsForUser(user_id)};
   //"urls_index is actually a template of ejs"
   res.render("urls_index", templateVars);
 });
@@ -127,35 +135,38 @@ app.get("/urls/new", (req, res) => {
 //page generated from function above
 app.post("/urls", (req, res) => {
   let randomSixDig = generateRandomString();
-  //console.log(randomSixDig);
   let userID = req.cookies["user_id"]
-  //console.log(userID);
-  //console.log(req.body);
   urlDatabase[randomSixDig] = {
     URL: req.body.longURL,
     userID: userID
   };
-  //console.log(urlDatabase);
   res.redirect("/urls/" + randomSixDig);
 });
 
 //Redirects user to the webpage they shortened the link to
 app.get("/u/:shortURL", (req, res) => {
-  let longURL = urlDatabase[req.params.shortURL];
+  let longURL = urlDatabase[req.params.shortURL].URL;
   res.redirect(longURL);
 });
 
-//Render template vars to be accessible within the urls show page
+//Render template vars to be accessible within the urls show page for logged in user
 app.get("/urls/:id", (req, res) => {
   //This returns the cookie id
   let user_id = req.cookies["user_id"]
   //This returns the user object based on user cookie
-  let user = users[user_id]
-  let templateVars = { user: user, shortURL: req.params.id, longURL: urlDatabase[req.params.id]};
-  res.render("urls_show", templateVars);
+  //let user = users[user_id].id
+  let URLUser = urlDatabase[req.params.id].userID
+  let templateVars = { user: user_id, shortURL: req.params.id, longURL: urlDatabase[req.params.id].URL};
+  if (user_id === undefined) {
+    res.status(403).send("Please login to view this page");
+  } else if (user_id != URLUser) {
+    res.status(403).send("Only the original owner may view this content")
+  } else {
+    res.render("urls_show", templateVars);
+  }
 });
 
-//Redirects the user upon pushing the delete button
+//Redirects the user upon pushing the delete button (only accessible to logged in users)
 app.post("/urls/:id/delete", (req, res) => {
   //This returns the cookie id
   let user_id = req.cookies["user_id"]
