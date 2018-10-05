@@ -34,7 +34,7 @@ const users = {
 //List used apps (middleware)
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
-  name: 'TinyApp Session'
+  name: 'TinyApp Session',
   keys: ["This is the secret phrase used for TinyApp"]
 }));
 //app.use(cookieParser());
@@ -66,7 +66,7 @@ app.get("/", (req, res) => {
 //Render templateVars to be accessible within the urls index page
 app.get("/urls", (req, res) => {
   //This returns the cookie id
-  let user_id = req.cookies["user_id"];
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id];
   //console.log(user);
@@ -78,7 +78,7 @@ app.get("/urls", (req, res) => {
 //Renders the login page with templateVars containing user information
 app.get("/login", (req, res) => {
   //This returns the cookie id
-  let user_id = req.cookies["user_id"];
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id];
   //console.log(user);
@@ -110,7 +110,7 @@ app.post("/login", (req, res) => {
 
   if (passwordMatch && isUserExist) {
     //Return the users information as a cookie and redirects to root
-    res.cookie("user_id", userID);
+    req.session.user_id = userID;
     res.redirect("/");
   } else {
     res.status(403).send("Please enter correct username and password");
@@ -120,14 +120,14 @@ app.post("/login", (req, res) => {
 
 //Clear cookies one the user logs out and redirect back to urls page
 app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+  req.session = null;
   res.redirect("/urls");
 });
 
 //Render templateVars to be accessible within the new urls page
 app.get("/urls/new", (req, res) => {
     //This returns the cookie id
-  let user_id = req.cookies["user_id"]
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id]
   let templateVars = { user: user };
@@ -142,7 +142,7 @@ app.get("/urls/new", (req, res) => {
 //page generated from function above
 app.post("/urls", (req, res) => {
   let randomSixDig = generateRandomString();
-  let userID = req.cookies["user_id"]
+  let userID = req.session["user_id"];
   urlDatabase[randomSixDig] = {
     URL: req.body.longURL,
     userID: userID
@@ -159,7 +159,7 @@ app.get("/u/:shortURL", (req, res) => {
 //Render template vars to be accessible within the urls show page for logged in user
 app.get("/urls/:id", (req, res) => {
   //This returns the cookie id
-  let user_id = req.cookies["user_id"]
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   //let user = users[user_id].id
   let URLUser = urlDatabase[req.params.id].userID
@@ -176,7 +176,7 @@ app.get("/urls/:id", (req, res) => {
 //Redirects the user upon pushing the delete button (only accessible to logged in users)
 app.post("/urls/:id/delete", (req, res) => {
   //This returns the cookie id
-  let user_id = req.cookies["user_id"]
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id].id
   let URLUser = urlDatabase[req.params.id].userID
@@ -194,7 +194,7 @@ app.post("/urls/:id/delete", (req, res) => {
 //Redirects the user upon pushing the update button
 app.post("/urls/:id", (req, res) => {
   //This returns the cookie id
-  let user_id = req.cookies["user_id"]
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id].id
 
@@ -214,7 +214,7 @@ app.post("/urls/:id", (req, res) => {
 //Renders the registry page with items inside of template vars
 app.get("/register", (req, res) => {
     //This returns the cookie id
-  let user_id = req.cookies["user_id"]
+  let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id]
   let templateVars = { user: user };
@@ -245,7 +245,7 @@ let hashedPassword = bcrypt.hashSync(req.body.password, 10);
     "password": hashedPassword
   };
   //Response with cookie containing the users id
-  res.cookie("user_id", users[randomSixDig].id);
+  req.session.user_id = users[randomSixDig].id;
   res.redirect("/urls");
 });
 
