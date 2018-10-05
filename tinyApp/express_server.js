@@ -4,6 +4,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser')
+const bcrypt = require('bcrypt');
 //This is the URL data that needs gets passed around
 const urlDatabase = {
   "b2xVn2": {
@@ -29,7 +30,7 @@ const users = {
   }
 };
 
-//List used apps
+//List used apps (middleware)
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 //Set view engine to EJS so EJS knows where to look
@@ -86,19 +87,19 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   //Check if users email & password exists
   let isUserExist = false;
+  let passwordEntered = req.body.password;
   let passwordMatch = false;
   let userID = "";
   //
   for (let user in users) {
     if (users[user].email === req.body.email) {
       isUserExist = true;
-    }
-  };
-  //Checks if password matches and updates userID to the users ID
-  for (let user in users) {
-    if (users[user].password === req.body.password) {
-      passwordMatch = true;
-      userID = users[user].id;
+      //Note the order of comparison, the hashed password comes second!!!
+      if (bcrypt.compareSync(passwordEntered, users[user].password)) {
+        passwordMatch = true;
+        userID = users[user].id;
+      }
+      break;
     }
   };
 
@@ -109,6 +110,7 @@ app.post("/login", (req, res) => {
   } else {
     res.status(403).send("Please enter correct username and password");
   }
+  console.log(users);
 });
 
 //Clear cookies one the user logs out and redirect back to urls page
@@ -232,10 +234,11 @@ if ((req.body.email === undefined && req.body.password === undefined) || isUserE
 //Note that randomSixDig function is local to this "POST" request rather than global to the
 //everything which would produce the same alphanumeric code
 let randomSixDig = generateRandomString();
+let hashedPassword = bcrypt.hashSync(req.body.password, 10);
   users[randomSixDig] = {
     "id": randomSixDig,
     "email": req.body.email,
-    "password": req.body.password
+    "password": hashedPassword
   };
   //Response with cookie containing the users id
   res.cookie("user_id", users[randomSixDig].id);
