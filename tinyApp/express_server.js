@@ -1,9 +1,10 @@
 //List of modules and primitive types
+const cookieSession = require('cookie-session')
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-const cookieParser = require('cookie-parser')
+//const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
 //This is the URL data that needs gets passed around
 const urlDatabase = {
@@ -32,7 +33,11 @@ const users = {
 
 //List used apps (middleware)
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
+app.use(cookieSession({
+  name: 'TinyApp Session'
+  keys: ["This is the secret phrase used for TinyApp"]
+}));
+//app.use(cookieParser());
 //Set view engine to EJS so EJS knows where to look
 app.set("view engine", "ejs");
 
@@ -45,7 +50,7 @@ function generateRandomString() {
 //Helper function to return filtered database for each user
 function urlsForUser(id) {
   var filteredUrlDatabase = {};
-  for (key in urlDatabase) {
+  for (let key in urlDatabase) {
     if (urlDatabase[key].userID === id) {
       filteredUrlDatabase[key] = urlDatabase[key]
     }
@@ -191,7 +196,6 @@ app.post("/urls/:id", (req, res) => {
   //This returns the cookie id
   let user_id = req.cookies["user_id"]
   //This returns the user object based on user cookie
-  console.log(users);
   let user = users[user_id].id
 
   let URLUser = urlDatabase[req.params.id].userID
