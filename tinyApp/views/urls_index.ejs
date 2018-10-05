@@ -1,4 +1,3 @@
-<!-- Index Page -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -15,7 +14,7 @@
 
         <form method="POST" action="/urls/<%=key%>/delete" style="margin:50px;">
           <li>
-            shortURL: <%= key %> -> <a href = "<%= urls[key] %>"><%= urls[key] %></a> <a href="http://localhost:8080/urls/<%=key%>">Edit</a> <button type="submit" value="Delete" color="blue">Delete</button>
+            shortURL: <%= key %> -> <a href = "<%= urls[key].URL %>"><%= urls[key].URL %></a> <a href="http://localhost:8080/urls/<%=key%>">Edit</a> <button type="submit" value="Delete" color="blue">Delete</button>
           </li>
         </form>
 

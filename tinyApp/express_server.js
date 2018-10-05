@@ -6,8 +6,14 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser')
 //This is the URL data that needs gets passed around
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": {
+    URL: "http://www.lighthouselabs.ca",
+    userID: "user2RandomID"
+  },
+  "9sm5xK": {
+    URL:"http://www.google.com",
+    userID: "user2RandomID"
+  }
 };
 //This is the list of users
 const users = {
@@ -32,6 +38,10 @@ app.set("view engine", "ejs");
 function generateRandomString() {
   let r = Math.random().toString(36).substring(7);
   return r;
+};
+
+function ursForUser(id) {
+
 };
 
 //Hello message on root page of TinyApp
@@ -106,15 +116,27 @@ app.get("/urls/new", (req, res) => {
   //This returns the user object based on user cookie
   let user = users[user_id]
   let templateVars = { user: user };
-  res.render("urls_new", templateVars);
+  if (user_id == undefined) {
+    res.redirect("/login");
+  } else {
+    res.render("urls_new", templateVars);
+  }
 });
 
 //Redirects user to short URL(6 digit alphanumeric code)
 //page generated from function above
 app.post("/urls", (req, res) => {
   let randomSixDig = generateRandomString();
-  urlDatabase[randomSixDig] = req.body.longURL
-  res.redirect("http://localhost:8080/urls/" + randomSixDig);
+  //console.log(randomSixDig);
+  let userID = req.cookies["user_id"]
+  //console.log(userID);
+  //console.log(req.body);
+  urlDatabase[randomSixDig] = {
+    URL: req.body.longURL,
+    userID: userID
+  };
+  //console.log(urlDatabase);
+  res.redirect("/urls/" + randomSixDig);
 });
 
 //Redirects user to the webpage they shortened the link to
@@ -135,19 +157,41 @@ app.get("/urls/:id", (req, res) => {
 
 //Redirects the user upon pushing the delete button
 app.post("/urls/:id/delete", (req, res) => {
-  //urlDatabase represents the object  and req.params.id
-  //represents the shortURL.  Delete operator deletes the key.
-  delete urlDatabase[req.params.id];
-  //res.redirect just refreshes our page everytime we delete
-  res.redirect("/urls");
+  //This returns the cookie id
+  let user_id = req.cookies["user_id"]
+  //This returns the user object based on user cookie
+  let user = users[user_id].id
+  let URLUser = urlDatabase[req.params.id].userID
+    if (user === URLUser) {
+      //urlDatabase represents the object  and req.params.id
+      //represents the shortURL.  Delete operator deletes the key.
+      delete urlDatabase[req.params.id];
+      //res.redirect just refreshes our page everytime we delete
+      res.redirect("/urls");
+    } else {
+      res.status(403).send("You may not delete that URL, please log in as the original poster.");
+    }
 });
 
 //Redirects the user upon pushing the update button
 app.post("/urls/:id", (req, res) => {
+  //This returns the cookie id
+  let user_id = req.cookies["user_id"]
+  //This returns the user object based on user cookie
+  console.log(users);
+  let user = users[user_id].id
+
+  let URLUser = urlDatabase[req.params.id].userID
+    if (user === URLUser) {
+      urlDatabase[req.params.id].URL = req.body.update
+      //console.log(req.body.update);
+      res.redirect("/urls");
+    } else {
+      res.status(403).send("You may not update that URL, please log in as the original poster.");
+    }
   //req.body.update references a "name" parameter inside of the
   //urls_show HTML body
-  urlDatabase[req.params.id] = req.body.update
-  res.redirect("/urls");
+
 });
 
 //Renders the registry page with items inside of template vars
@@ -182,12 +226,8 @@ let randomSixDig = generateRandomString();
     "email": req.body.email,
     "password": req.body.password
   };
-  //debugger below
-  //console.log(users[randomSixDig]);
   //Response with cookie containing the users id
   res.cookie("user_id", users[randomSixDig].id);
-  //debugger below
-  //console.log(users[randomSixDig]);
   res.redirect("/urls");
 });
 
