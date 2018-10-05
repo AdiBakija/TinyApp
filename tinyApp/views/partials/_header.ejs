@@ -5,8 +5,20 @@
   </head>
   <body>
     <h1>TinyApp</h1>
-    <p><a href="/register">Register</a></p>
-    <p><a href="/login">Login</a></p>
+
+    <% if (user === undefined) { %>
+
+      <p><a href="/register">Register</a></p>
+      <p><a href="/login">Login</a></p>
+
+    <% } else { %>
+
+      <form action="/logout" method="POST" style="margin:10px;">
+      <label><%= user.email %></label>
+      <input type="submit" name ="logout" value="Sign out">
+      </form>
+
+    <% } %>
   </body>
 </html>
 

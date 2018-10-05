@@ -111,7 +111,7 @@ app.post("/login", (req, res) => {
   if (passwordMatch && isUserExist) {
     //Return the users information as a cookie and redirects to root
     req.session.user_id = userID;
-    res.redirect("/");
+    res.redirect("/urls");
   } else {
     res.status(403).send("Please enter correct username and password");
   }
@@ -161,9 +161,8 @@ app.get("/urls/:id", (req, res) => {
   //This returns the cookie id
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
-  //let user = users[user_id].id
   let URLUser = urlDatabase[req.params.id].userID
-  let templateVars = { user: user_id, shortURL: req.params.id, longURL: urlDatabase[req.params.id].URL};
+  let templateVars = { user: users[user_id], shortURL: req.params.id, longURL: urlDatabase[req.params.id].URL};
   if (user_id === undefined) {
     res.status(403).send("Please login to view this page");
   } else if (user_id != URLUser) {
@@ -197,7 +196,8 @@ app.post("/urls/:id", (req, res) => {
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id].id
-
+  //req.body.update references a "name" parameter inside of the
+  //urls_show HTML body
   let URLUser = urlDatabase[req.params.id].userID
     if (user === URLUser) {
       urlDatabase[req.params.id].URL = req.body.update
@@ -206,9 +206,6 @@ app.post("/urls/:id", (req, res) => {
     } else {
       res.status(403).send("You may not update that URL, please log in as the original poster.");
     }
-  //req.body.update references a "name" parameter inside of the
-  //urls_show HTML body
-
 });
 
 //Renders the registry page with items inside of template vars
