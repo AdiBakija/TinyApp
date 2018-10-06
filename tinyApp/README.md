@@ -3,7 +3,8 @@
 TinyApp is a full stack web application built with Node and Express that allows users to shorten their links!
 
 ## Final Product
-
+!["This is the register page where users are able to create a new account!"](register-page.png)
+!["This is the login page where users are able to login to their existing account!"](login-page.png)
 !["This is the main URLs page where users can see their shortened links!"](urls-page.png)
 !["This is the new URL page, where users are able to enter a URL to be shortened and added to their list"](urls-new-page.png)
 
