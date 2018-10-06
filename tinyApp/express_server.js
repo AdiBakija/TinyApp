@@ -1,10 +1,9 @@
 //List of modules and primitive types
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
-//const cookieParser = require('cookie-parser')
 const bcrypt = require('bcrypt');
 //This is the URL data that needs gets passed around
 const urlDatabase = {
@@ -37,7 +36,7 @@ app.use(cookieSession({
   name: 'TinyApp Session',
   keys: ["This is the secret phrase used for TinyApp"]
 }));
-//app.use(cookieParser());
+
 //Set view engine to EJS so EJS knows where to look
 app.set("view engine", "ejs");
 
@@ -49,10 +48,10 @@ function generateRandomString() {
 
 //Helper function to return filtered database for each user
 function urlsForUser(id) {
-  var filteredUrlDatabase = {};
+  let filteredUrlDatabase = {};
   for (let key in urlDatabase) {
     if (urlDatabase[key].userID === id) {
-      filteredUrlDatabase[key] = urlDatabase[key]
+      filteredUrlDatabase[key] = urlDatabase[key];
     }
   }
   return filteredUrlDatabase;
@@ -69,7 +68,6 @@ app.get("/urls", (req, res) => {
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id];
-  //console.log(user);
   let templateVars = { user: user, urls: urlsForUser(user_id)};
   //"urls_index is actually a template of ejs"
   res.render("urls_index", templateVars);
@@ -81,7 +79,6 @@ app.get("/login", (req, res) => {
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
   let user = users[user_id];
-  //console.log(user);
   let templateVars = { user: user};
   //"urls_index is actually a template of ejs"
   res.render("tiny_login", templateVars);
@@ -115,7 +112,6 @@ app.post("/login", (req, res) => {
   } else {
     res.status(403).send("Please enter correct username and password");
   }
-  console.log(users);
 });
 
 //Clear cookies one the user logs out and redirect back to urls page
@@ -129,7 +125,7 @@ app.get("/urls/new", (req, res) => {
     //This returns the cookie id
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
-  let user = users[user_id]
+  let user = users[user_id];
   let templateVars = { user: user };
   if (user_id == undefined) {
     res.redirect("/login");
@@ -166,7 +162,7 @@ app.get("/urls/:id", (req, res) => {
   if (user_id === undefined) {
     res.status(403).send("Please login to view this page");
   } else if (user_id != URLUser) {
-    res.status(403).send("Only the original owner may view this content")
+    res.status(403).send("Only the original owner may view this content");
   } else {
     res.render("urls_show", templateVars);
   }
@@ -177,8 +173,8 @@ app.post("/urls/:id/delete", (req, res) => {
   //This returns the cookie id
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
-  let user = users[user_id].id
-  let URLUser = urlDatabase[req.params.id].userID
+  let user = users[user_id].id;
+  let URLUser = urlDatabase[req.params.id].userID;
     if (user === URLUser) {
       //urlDatabase represents the object  and req.params.id
       //represents the shortURL.  Delete operator deletes the key.
@@ -195,13 +191,12 @@ app.post("/urls/:id", (req, res) => {
   //This returns the cookie id
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
-  let user = users[user_id].id
+  let user = users[user_id].id;
   //req.body.update references a "name" parameter inside of the
   //urls_show HTML body
   let URLUser = urlDatabase[req.params.id].userID
     if (user === URLUser) {
-      urlDatabase[req.params.id].URL = req.body.update
-      //console.log(req.body.update);
+      urlDatabase[req.params.id].URL = req.body.update;
       res.redirect("/urls");
     } else {
       res.status(403).send("You may not update that URL, please log in as the original poster.");
@@ -213,7 +208,7 @@ app.get("/register", (req, res) => {
     //This returns the cookie id
   let user_id = req.session["user_id"];
   //This returns the user object based on user cookie
-  let user = users[user_id]
+  let user = users[user_id];
   let templateVars = { user: user };
   res.render("tiny_register", templateVars);
 });
